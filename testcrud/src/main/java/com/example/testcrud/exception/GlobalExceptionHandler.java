@@ -1,6 +1,6 @@
 package com.example.testcrud.exception;
 
-import com.example.testcrud.model.ApiResponse;
+import com.example.testcrud.Warpper.ResponseWrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,8 +12,8 @@ public class GlobalExceptionHandler {
 
     // Handle custom ResourceNotFoundException
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse> handleResourceNotFound(ResourceNotFoundException ex) {
-        ApiResponse response = new ApiResponse(
+    public ResponseEntity<ResponseWrapper<Object>> handleResourceNotFound(ResourceNotFoundException ex) {
+        ResponseWrapper<Object> response = new ResponseWrapper<>(
                 HttpStatus.NOT_FOUND.value(),
                 ex.getMessage(),
                 null
@@ -23,24 +23,24 @@ public class GlobalExceptionHandler {
 
     // Handle validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ResponseWrapper<Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
         String errorMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
-        ApiResponse response = new ApiResponse(
+        ResponseWrapper<Object> response = new ResponseWrapper<>(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation error: " + errorMessage,
                 null
         );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-/*
+
     // Handle all other exceptions
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse> handleGeneralException(Exception ex) {
-        ApiResponse response = new ApiResponse(
+    public ResponseEntity<ResponseWrapper<Object>> handleGeneralException(Exception ex) {
+        ResponseWrapper<Object> response = new ResponseWrapper<>(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Internal server error: " + ex.getMessage(),
                 null
         );
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }*/
+    }
 }
